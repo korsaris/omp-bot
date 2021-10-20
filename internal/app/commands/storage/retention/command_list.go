@@ -2,18 +2,19 @@ package retention
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"github.com/ozonmp/omp-bot/internal/app/path"
 )
 
-func (c *StorageRetentionCommander) List(inputMessage *tgbotapi.Message) {
+func (c *RetentionCommanderImpl) List(inputMessage *tgbotapi.Message) {
 	outputMsgText := "Here all the products: \n\n"
 
-	products := c.retentionService.List()
-	for _, p := range products {
-		outputMsgText += p.Title
+	retents, err := c.retentionService.List(0, 0)
+	for _, r := range retents {
+		outputMsgText += fmt.Sprintf("%d", r.RetentionID)
 		outputMsgText += "\n"
 	}
 
@@ -36,7 +37,7 @@ func (c *StorageRetentionCommander) List(inputMessage *tgbotapi.Message) {
 		),
 	)
 
-	_, err := c.bot.Send(msg)
+	_, err = c.bot.Send(msg)
 	if err != nil {
 		log.Printf("StorageRetentionCommander.List: error sending reply message to chat - %v", err)
 	}

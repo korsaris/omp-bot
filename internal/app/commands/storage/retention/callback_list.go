@@ -13,11 +13,11 @@ type CallbackListData struct {
 	Offset int `json:"offset"`
 }
 
-func (c *StorageRetentionCommander) CallbackList(callback *tgbotapi.CallbackQuery, callbackPath path.CallbackPath) {
+func (c *RetentionCommanderImpl) CallbackList(callback *tgbotapi.CallbackQuery, callbackPath path.CallbackPath) {
 	parsedData := CallbackListData{}
 	err := json.Unmarshal([]byte(callbackPath.CallbackData), &parsedData)
 	if err != nil {
-		log.Printf("StorageRetentionCommander.CallbackList: "+
+		log.Printf("RetentionCommanderImpl.CallbackList: "+
 			"error reading json data for type CallbackListData from "+
 			"input string %v - %v", callbackPath.CallbackData, err)
 		return
@@ -28,6 +28,6 @@ func (c *StorageRetentionCommander) CallbackList(callback *tgbotapi.CallbackQuer
 	)
 	_, err = c.bot.Send(msg)
 	if err != nil {
-		log.Printf("StorageRetentionCommander.CallbackList: error sending reply message to chat - %v", err)
+		log.Printf("RetentionCommanderImpl.CallbackList: error sending reply message to chat - %v", err)
 	}
 }

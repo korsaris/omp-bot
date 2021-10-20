@@ -24,24 +24,23 @@ func NewStorageCommander(
 	return &StorageCommander{
 		bot: bot,
 		// retentionCommander
-		retentionCommander: retention.NewStorageRetentionCommander(bot),
+		retentionCommander: retention.NewRetentionCommanderImpl(bot),
 	}
 }
 
 func (c *StorageCommander) HandleCallback(callback *tgbotapi.CallbackQuery, callbackPath path.CallbackPath) {
-	switch callbackPath.Retention {
+	switch callbackPath.Subdomain {
 	case "retention":
 		c.retentionCommander.HandleCallback(callback, callbackPath)
 	default:
-		log.Printf("StorageCommander.HandleCallback: unknown retention - %s", callbackPath.Retention)
+		log.Printf("StorageCommander.HandleCallback: unknown subdomain - %s", callbackPath.Subdomain)
 	}
 }
 
 func (c *StorageCommander) HandleCommand(msg *tgbotapi.Message, commandPath path.CommandPath) {
-	switch commandPath.Retention {
+	switch commandPath.Subdomain {
 	case "retention":
 		c.retentionCommander.HandleCommand(msg, commandPath)
 	default:
-		log.Printf("StorageCommander.HandleCommand: unknown retention - %s", commandPath.Retention)
 	}
 }

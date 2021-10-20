@@ -1,11 +1,12 @@
 package retention
 
 import (
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"log"
+
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 )
 
-func (c *StorageRetentionCommander) Help(inputMessage *tgbotapi.Message) {
+func (c *RetentionCommanderImpl) Help(inputMessage *tgbotapi.Message) {
 	msg := tgbotapi.NewMessage(inputMessage.Chat.ID,
 		"/help - help\n"+
 			"/list - list products",
@@ -13,6 +14,6 @@ func (c *StorageRetentionCommander) Help(inputMessage *tgbotapi.Message) {
 
 	_, err := c.bot.Send(msg)
 	if err != nil {
-		log.Printf("StorageRetentionCommander.Help: error sending reply message to chat - %v", err)
+		log.Printf("RetentionCommanderImpl.Help: error sending reply message to chat - %v", err)
 	}
 }

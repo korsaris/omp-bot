@@ -5,53 +5,43 @@ import (
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"github.com/ozonmp/omp-bot/internal/app/path"
-//	"github.com/ozonmp/omp-bot/internal/model/storage"
 	"github.com/ozonmp/omp-bot/internal/service/storage/retention"
-	
 )
 
-
 type RetentionCommander interface {
-  Help(inputMsg *tgbotapi.Message)
-  Get(inputMsg *tgbotapi.Message)
-  List(inputMsg *tgbotapi.Message)
-  Delete(inputMsg *tgbotapi.Message)
+	Help(inputMsg *tgbotapi.Message)
+	Get(inputMsg *tgbotapi.Message)
+	List(inputMsg *tgbotapi.Message)
+	Delete(inputMsg *tgbotapi.Message)
 
-  New(inputMsg *tgbotapi.Message)    // return error not implemented
-  Edit(inputMsg *tgbotapi.Message)   // return error not implemented
+	New(inputMsg *tgbotapi.Message)  // return error not implemented
+	Edit(inputMsg *tgbotapi.Message) // return error not implemented
 }
 
-func NewRetentionCommander(bot *tgbotapi.BotAPI, service retention.RetentionService) RetentionCommander {
-  // ...
-}
-
-
-type StorageRetentionCommander struct {
+type RetentionCommanderImpl struct {
 	bot              *tgbotapi.BotAPI
-	retentionService *retention.RetentionService
+	retentionService retention.RetentionService
 }
 
-func NewStorageRetentionCommander(
+func NewRetentionCommanderImpl(
 	bot *tgbotapi.BotAPI,
-) *StorageRetentionCommander {
-	retentionService := retention.NewDummyRetentionService()
-
-	return &StorageRetentionCommander{
+) *RetentionCommanderImpl {
+	return &RetentionCommanderImpl{
 		bot:              bot,
-		retentionService: retentionService,
+		retentionService: retention.NewDummyRetentionService(),
 	}
 }
 
-func (c *StorageRetentionCommander) HandleCallback(callback *tgbotapi.CallbackQuery, callbackPath path.CallbackPath) {
+func (c *RetentionCommanderImpl) HandleCallback(callback *tgbotapi.CallbackQuery, callbackPath path.CallbackPath) {
 	switch callbackPath.CallbackName {
 	case "list":
-		c.CallbackList(callback, callbackPath)
+	//	c.CallbackList(callback, callbackPath)
 	default:
-		log.Printf("StorageRetentionCommander.HandleCallback: unknown callback name: %s", callbackPath.CallbackName)
+		log.Printf("RetentionCommanderImpl.HandleCallback: unknown callback name: %s", callbackPath.CallbackName)
 	}
 }
 
-func (c *StorageRetentionCommander) HandleCommand(msg *tgbotapi.Message, commandPath path.CommandPath) {
+func (c *RetentionCommanderImpl) HandleCommand(msg *tgbotapi.Message, commandPath path.CommandPath) {
 	switch commandPath.CommandName {
 	case "help":
 		c.Help(msg)
