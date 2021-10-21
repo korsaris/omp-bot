@@ -45,11 +45,24 @@ func (c *RetentionCommanderImpl) HandleCommand(msg *tgbotapi.Message, commandPat
 	switch commandPath.CommandName {
 	case "help":
 		c.Help(msg)
-	case "list":
-		c.List(msg)
 	case "get":
 		c.Get(msg)
+	case "list":
+		c.List(msg)
+	case "delete":
+		c.Delete(msg)
+	case "new":
+		c.New(msg)
+	case "edit":
+		c.Edit(msg)
 	default:
 		c.Default(msg)
 	}
+	/*/help__{domain}__{subdomain} — print list of commands
+	  /get__{domain}__{subdomain} — get a entity
+	  /list__{domain}__{subdomain} — get a list of your entity (💎: with pagination via telegram keyboard)
+	  /delete__{domain}__{subdomain} — delete an existing entity
+
+	  /new__{domain}__{subdomain} — create a new entity // not implemented (💎: implement list fields via arguments)
+	  /edit__{domain}__{subdomain} — edit a entity*/
 }

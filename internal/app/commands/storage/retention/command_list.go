@@ -1,26 +1,25 @@
 package retention
 
 import (
-	"encoding/json"
 	"fmt"
 	"log"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
-	"github.com/ozonmp/omp-bot/internal/app/path"
 )
 
 func (c *RetentionCommanderImpl) List(inputMessage *tgbotapi.Message) {
-	outputMsgText := "Here all the products: \n\n"
+	// TODO: JSON IMPL + Inline Ketboard
+
+	outputMsgText := "Here all the elements: \n\n"
 
 	retents, err := c.retentionService.List(0, 0)
 	for _, r := range retents {
-		outputMsgText += fmt.Sprintf("%d", r.RetentionID)
-		outputMsgText += "\n"
+		outputMsgText += fmt.Sprintf("%v\n", r)
 	}
 
 	msg := tgbotapi.NewMessage(inputMessage.Chat.ID, outputMsgText)
 
-	serializedData, _ := json.Marshal(CallbackListData{
+	/*serializedData, _ := json.Marshal(CallbackListData{
 		Offset: 21,
 	})
 
@@ -35,7 +34,7 @@ func (c *RetentionCommanderImpl) List(inputMessage *tgbotapi.Message) {
 		tgbotapi.NewInlineKeyboardRow(
 			tgbotapi.NewInlineKeyboardButtonData("Next page", callbackPath.String()),
 		),
-	)
+	)*/
 
 	_, err = c.bot.Send(msg)
 	if err != nil {

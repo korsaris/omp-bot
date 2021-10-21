@@ -11,19 +11,19 @@ import (
 func (c *RetentionCommanderImpl) Get(inputMessage *tgbotapi.Message) {
 	args := inputMessage.CommandArguments()
 
-	idx, err := strconv.ParseUint(args, 10, 64)
+	retentionID, err := strconv.ParseUint(args, 10, 64)
 	if err != nil {
 		log.Println("wrong args", args)
 		return
 	}
 
-	retent_list, err := c.retentionService.List(idx, 1)
+	retent, err := c.retentionService.Describe(retentionID)
 	if err != nil {
-		log.Printf("fail to get product with idx %d: %v", idx, err)
+		log.Printf("fail to get element with retentionID=%d: %v", retentionID, err)
 		return
 	}
 
-	retent := retent_list[0]
+	// TODO: Retention Stringer or Json
 	msg := tgbotapi.NewMessage(
 		inputMessage.Chat.ID,
 		fmt.Sprintf("retentionID:%v", retent.RetentionID),

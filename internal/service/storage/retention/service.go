@@ -1,6 +1,9 @@
 package retention
 
-//"errors"
+import (
+	"fmt"
+	"sort"
+)
 
 type RetentionService interface {
 	Describe(retentionID uint64) (*Retention, error)
@@ -16,64 +19,73 @@ func NewDummyRetentionService() *DummyRetentionService {
 	return &DummyRetentionService{}
 }
 
-// это get
+// вообще, по названию, ф-ция должна делать что-то другое, но по сигнатуре
+// похожа на get, пока будем использовать её именно так
 func (s *DummyRetentionService) Describe(retentionID uint64) (*Retention, error) {
-	/*for _, v := range allRetention {
-	    if v.retentionID == retentionID {
-	      return &v, nil
-	    }
-	  }
-	  return allRetention[retentionID], errors.Printf("retentionID %d not found!", retentionID)*/
-	return nil, nil
+	for _, v := range allRetention {
+		if v.RetentionID == retentionID {
+			return &v, nil
+		}
+	}
+
+	return nil, fmt.Errorf("RetentionID=%d not found!", retentionID)
 }
 
-// это list
 func (s *DummyRetentionService) List(cursor uint64, limit uint64) ([]Retention, error) {
-	//return allRetention, nil
-	return nil, nil
+	if limit == 0 && cursor == 0 {
+		return allRetention, nil
+	}
+
+	retensionsLen := uint64(len(allRetention))
+	maxUint64 := ^uint64(0)
+	if cursor > retensionsLen || maxUint64-limit < cursor || cursor+limit > retensionsLen {
+		return nil, fmt.Errorf("Index must be lower than %v", retensionsLen)
+	}
+	return allRetention[cursor : cursor+limit], nil
 }
 
-// это new
 func (s *DummyRetentionService) Create(r Retention) (uint64, error) {
-	/*for _, v := range allRetention {
-	    if v.retentionID == r.retentionID {
-	      return nil, errors.Printf("retentionID %d already exist!", retentionID)
-	    }
-	  }
+	for i, v := range allRetention {
+		if v.RetentionID == r.RetentionID {
+			//FIXME: sign to unsign convertion, there may be problems
+			return uint64(i), fmt.Errorf("Entry with RetentionID=%d already exist!", r.RetentionID)
+		}
+	}
 
-	  append(allRetention, r)
-	  sort.SliceStable(allRetention, func(i, j int) bool {
-	    return allRetention[i].retentionID < allRetention[j].retentionID
-	  })
-	*/
-	return 0, nil
+	// append at end and sort
+	allRetention = append(allRetention, r)
+	sort.SliceStable(allRetention, func(i, j int) bool {
+		return allRetention[i].RetentionID < allRetention[j].RetentionID
+	})
+
+	for i, v := range allRetention {
+		if v.RetentionID == r.RetentionID {
+			//FIXME: sign to unsign convertion, there may be problems
+			return uint64(i), nil
+		}
+	}
+	return 0, fmt.Errorf("Empty entry with RetentionID=%d after insert!", r.RetentionID)
 }
 
-// это edit
 func (s *DummyRetentionService) Update(retentionID uint64, retention Retention) error {
-	/*
-	  for i, v := range allRetention {
-	    if v.retentionID == retention.retentionID {
-	      allRetention[i] = retention
-	      return nil
-	    }
-	  }
-	  // если элемента нет, считаем, что надо создать, заного отработает поиск, но, пока поф, это заглушка
-	  _, err := s.New(retention)
-	  return err*/
-	return nil
+	for i, v := range allRetention {
+		if v.RetentionID == retention.RetentionID {
+			allRetention[i] = retention
+			return nil
+		}
+	}
+
+	return fmt.Errorf("RetentionID=%d not found!", retentionID)
 }
 
-// это delete
 func (s *DummyRetentionService) Remove(retentionID uint64) (bool, error) {
-	/*
-	  for i, v := range allRetention {
-	    if v.retentionID == retentionID {
-	        allRetention = append(slice[:i], slice[i+1:]...)
-	      return nil
-	    }
-	  }
-	  // Элемента нет, удалять нечего, всё ок?
-	  return nil*/
-	return true, nil
+
+	for i, v := range allRetention {
+		if v.RetentionID == retentionID {
+			allRetention = append(allRetention[:i], allRetention[i+1:]...)
+			return true, nil
+		}
+	}
+
+	return false, fmt.Errorf("RetentionID=%d not found!", retentionID)
 }

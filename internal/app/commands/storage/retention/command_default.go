@@ -13,6 +13,6 @@ func (c *RetentionCommanderImpl) Default(inputMessage *tgbotapi.Message) {
 
 	_, err := c.bot.Send(msg)
 	if err != nil {
-		log.Printf("RetentionCommanderImpl.Help: error sending reply message to chat - %v", err)
+		log.Printf("RetentionCommanderImpl.Default: error sending reply message to chat - %v", err)
 	}
 }
