@@ -10,7 +10,9 @@ import (
 )
 
 func main() {
-	_ = godotenv.Load()
+	if err := godotenv.Load(); err != nil {
+		log.Print("No .env file found")
+	}
 
 	token, found := os.LookupEnv("TOKEN")
 	if !found {
@@ -20,6 +22,7 @@ func main() {
 	bot, err := tgbotapi.NewBotAPI(token)
 	if err != nil {
 		log.Panic(err)
+		return
 	}
 
 	// Uncomment if you want debugging
